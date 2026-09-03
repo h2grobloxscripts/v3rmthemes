@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         V3rmillion Classic Theme - Screenshot Match
+// @name         V3rmillion Better RetroSlop
 // @namespace    http://tampermonkey.net/
 // @version      5.3.1
-// @description  V3rmillion classic screenshot-matched theme
+// @description  V3rmillion better retroslop theme
 // @author       kaku
 // @match        *://v3rm.net/*
 // @match        *://www.v3rm.net/*
