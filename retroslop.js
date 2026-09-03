@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         V3rmillion Better RetroSlop
+// @name         V3rmillion Classic Theme - Screenshot Match
 // @namespace    http://tampermonkey.net/
 // @version      5.3.1
-// @description  V3rmillion better retroslop theme
+// @description  V3rmillion classic screenshot-matched theme
 // @author       kaku
 // @match        *://v3rm.net/*
 // @match        *://www.v3rm.net/*
@@ -730,45 +730,89 @@
             color: #dddddd !important;
         }
 
-        /* =========================================================
-           LIKE REACTION
-           Hide the JoyPixels image completely.
-           JS inserts a real green thumbs-up element.
-        ========================================================= */
+/* =========================================================
+   LIKE REACTION FIX
+   ========================================================= */
 
-        img.reaction-image--emoji.js-reaction[alt="Like"],
-        img.reaction-image--emoji.js-reaction[title="Like"] {
-            display: none !important;
-        }
+/* Hide original XenForo Like image */
+img.reaction-image--emoji.js-reaction[alt="Like"],
+img.reaction-image--emoji.js-reaction[title="Like"] {
+    display: none !important;
+}
 
-        .v3rm-green-like {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
 
-            width: 19px !important;
-            height: 19px !important;
+/* Remove XenForo generated icon */
+.reaction--1 > i {
+    display: none !important;
+}
 
-            margin-right: 5px !important;
 
-            background: transparent !important;
-            border: 0 !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
+/* Keep reaction wrapper normal */
+.reaction--1 {
+    background: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
 
-            vertical-align: middle !important;
-            flex-shrink: 0 !important;
-        }
 
-        .v3rm-green-like svg {
-            display: block !important;
+/* Kill selected/liked circle */
+.reaction--1:hover,
+.reaction--1:active,
+.reaction--1:focus,
+.reaction--1.is-selected,
+.reaction--1.is-active {
+    background: transparent !important;
+    box-shadow: none !important;
+}
 
-            width: 18px !important;
-            height: 18px !important;
 
-            fill: var(--like-green) !important;
-            stroke: none !important;
-        }
+/* Kill pseudo-element circle */
+.reaction--1::before,
+.reaction--1::after {
+    display: none !important;
+    content: none !important;
+}
+
+
+/* Custom green thumb */
+.v3rm-green-like {
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 19px !important;
+    height: 19px !important;
+
+    margin-right: 5px !important;
+
+    padding: 0 !important;
+
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+
+    vertical-align: middle !important;
+    flex-shrink: 0 !important;
+
+    pointer-events: none !important;
+}
+
+
+.v3rm-green-like svg {
+    display: block !important;
+
+    width: 18px !important;
+    height: 18px !important;
+
+    fill: var(--like-green) !important;
+    stroke: none !important;
+
+    background: transparent !important;
+}
 
         /* =========================================================
            SIDEBAR
@@ -1069,73 +1113,166 @@
                 padding: 13px 14px !important;
             }
         }
+/* REMOVE BLACK CIRCLE FROM LIKED REACTION LIST ITEM */
+
+.reactionSummary li,
+.reactionsBar li,
+.js-reactionsList li {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.reactionSummary li:hover,
+.reactionsBar li:hover,
+.js-reactionsList li:hover {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* =========================================================
+   PROFILE POST COMMENTS
+   ========================================================= */
+
+.message-responseRow,
+.comment,
+.comment-inner,
+.comment-main,
+.comment-content,
+.comment-contentWrapper,
+.comment-body,
+.comment-reactions {
+    background: #1d1d1d !important;
+    color: var(--text) !important;
+}
+
+
+/* Comment body text */
+.comment-body .bbWrapper {
+    color: #cccccc !important;
+}
+
+
+/* Comment footer */
+.comment-footer,
+.comment-actionBar {
+    background: transparent !important;
+}
+
+
+/* Reaction area under comments */
+.comment-reactions,
+.js-commentReactionsList {
+    background: #1d1d1d !important;
+    border: none !important;
+}
+
+
+/* Reaction summary pill */
+.comment-reactions .reactionSummary li {
+    background: #393939 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+
+
+/* Username / links */
+.comment-user,
+.comment-footer a,
+.comment-footer time {
+    color: #999999 !important;
+}
+
     `);
 
     /* =============================================================
        JAVASCRIPT
     ============================================================= */
 
-    function replaceLikeImages() {
+function replaceLikeImages() {
 
-        document
-            .querySelectorAll(
-                'img.reaction-image--emoji.js-reaction[alt="Like"], ' +
-                'img.reaction-image--emoji.js-reaction[title="Like"]'
-            )
-            .forEach(function (img) {
+    document
+        .querySelectorAll(
+            'img.reaction-image--emoji.js-reaction[alt="Like"], ' +
+            'img.reaction-image--emoji.js-reaction[title="Like"]'
+        )
+        .forEach(function (img) {
 
-                /*
-                 * Already replaced.
-                 */
-                if (
-                    img.parentElement &&
-                    img.parentElement.querySelector('.v3rm-green-like')
-                ) {
-                    return;
-                }
 
-                /*
-                 * Create a real element instead of using
-                 * ::before / ::after on the <img>.
-                 */
-                const replacement = document.createElement('span');
+            if (
+                img.parentElement &&
+                img.parentElement.querySelector('.v3rm-green-like')
+            ) {
+                return;
+            }
 
-                replacement.className = 'v3rm-green-like';
 
-                replacement.setAttribute('aria-label', 'Like');
-                replacement.setAttribute('title', 'Like');
+            const replacement = document.createElement('span');
 
-                replacement.innerHTML = `
-                    <svg
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                    >
-                        <path d="
-                            M2 10
-                            H6
-                            V22
-                            H2
-                            Z
+            replacement.className = 'v3rm-green-like';
 
-                            M8 10
-                            L13 2
-                            C13.4 1.3 14.2 1 15 1.3
-                            C16.1 1.7 16.7 2.9 16.3 4
-                            L15 9
-                            H20.5
-                            C22.1 9 23.2 10.4 22.8 11.9
-                            L20.8 20
-                            C20.5 21.2 19.4 22 18.2 22
-                            H8
-                            Z
-                        "/>
-                    </svg>
-                `;
+            replacement.setAttribute('aria-label','Like');
+            replacement.setAttribute('title','Like');
 
-                img.replaceWith(replacement);
-            });
-    }
+
+            replacement.innerHTML = `
+
+            <svg
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true">
+
+                <path d="
+                M2 10
+                H6
+                V22
+                H2
+                Z
+
+                M8 10
+                L13 2
+                C13.4 1.3 14.2 1 15 1.3
+                C16.1 1.7 16.7 2.9 16.3 4
+
+                L15 9
+
+                H20.5
+                C22.1 9 23.2 10.4 22.8 11.9
+
+                L20.8 20
+
+                C20.5 21.2 19.4 22 18.2 22
+
+                H8
+                Z"/>
+
+            </svg>
+
+            `;
+
+
+            img.replaceWith(replacement);
+
+        });
+
+
+    /*
+       Remove any leftover XenForo duplicate
+       Like wrappers
+    */
+
+    document
+        .querySelectorAll('.reaction--like .reaction-image--emoji')
+        .forEach(function(el){
+
+            el.style.display = 'none';
+
+        });
+
+}
 
     function fixThemeElements() {
 
